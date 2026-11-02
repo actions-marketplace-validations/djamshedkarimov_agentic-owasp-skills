@@ -61,11 +61,11 @@ Supported targets for v1: Python (`mcp`, FastMCP) and TypeScript (`@modelcontext
 
 ### CLI
 
-Requires [Semgrep](https://semgrep.dev) 1.180.0 on `PATH`. It is not a package dependency because
-Semgrep pins an `mcp` version that conflicts with the servers it scans.
+Requires [Semgrep](https://semgrep.dev) 1.180.0 or a newer 1.x on `PATH`. It is not a package
+dependency because Semgrep pins an `mcp` version that conflicts with the servers it scans.
 
 ```sh
-uv tool install semgrep==1.180.0
+uv tool install semgrep
 uvx --from git+https://github.com/djamshedkarimov/agentic-owasp-skills@v0.1.2 agentic-owasp scan path/to/server
 ```
 
@@ -137,6 +137,11 @@ The [threat model](docs/THREAT_MODEL.md) has the full picture.
 The repo (CLI, Action, rules) follows SemVer via `vX.Y.Z` tags, with a moving `v1` tag for the
 Action. Each skill also declares its own version in its `SKILL.md`. Rule changes that can
 introduce new findings are a minor bump; removing or renaming a rule ID is a major bump.
+
+A release is cut when rules, the CLI, or a skill change, or when the image's Grype gate fails.
+Semgrep and base-image bumps arrive as Dependabot PRs and need no release: the CLI accepts any
+1.x at or above the tested floor, CI runs the rule tests against the pinned version and, without
+blocking, the latest release, and the image picks the bump up at the next release.
 
 ## Development
 

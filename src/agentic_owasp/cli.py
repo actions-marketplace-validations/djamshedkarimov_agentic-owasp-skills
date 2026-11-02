@@ -4,7 +4,15 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from agentic_owasp import __version__, report
-from agentic_owasp.scanner import SEMGREP_VERSION, ScanError, Severity, find_semgrep, scan, semgrep_version
+from agentic_owasp.scanner import (
+    SEMGREP_MIN,
+    ScanError,
+    Severity,
+    find_semgrep,
+    scan,
+    semgrep_supported,
+    semgrep_version,
+)
 
 EXIT_CLEAN, EXIT_FINDINGS, EXIT_ERROR = 0, 1, 2
 FORMATTERS = {"text": report.text, "json": report.json_report, "sarif": report.sarif}
@@ -15,8 +23,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
         installed = semgrep_version(find_semgrep())
-        if installed != SEMGREP_VERSION:
-            _warn(f"semgrep {installed} is installed; rules are tested against {SEMGREP_VERSION}")
+        if not semgrep_supported(installed):
+            _warn(f"semgrep {installed} is installed; rules need {SEMGREP_MIN} or newer in the same major")
         result = scan(args.path)
     except ScanError as exc:
         print(f"agentic-owasp: error: {exc}", file=sys.stderr)
