@@ -18,3 +18,10 @@ def test_marketplace_lists_the_repo_root_plugin() -> None:
     assert entry["name"] == plugin["name"]
     assert entry["source"] == "./"
     assert "version" not in entry
+
+
+def test_plugin_icon_is_a_png_inside_the_plugin() -> None:
+    plugin = json.loads((PLUGIN_DIR / "plugin.json").read_text())
+    icon = (REPO_ROOT / plugin["icon"]).resolve()
+    assert icon.is_relative_to(REPO_ROOT)
+    assert icon.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
