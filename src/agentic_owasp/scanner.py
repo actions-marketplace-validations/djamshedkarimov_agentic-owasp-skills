@@ -8,7 +8,8 @@ from enum import IntEnum
 from pathlib import Path
 from typing import Any
 
-SEMGREP_VERSION = "1.180.0"
+SEMGREP_MIN = "1.180.0"
+_SEMGREP_FLOOR = tuple(int(part) for part in SEMGREP_MIN.split("."))
 _PACKAGED_RULES = Path(__file__).parent / "rules"
 _CHECKOUT_RULES = Path(__file__).resolve().parents[2] / "skills"
 # Fails closed: a directive that is not exactly `nosemgrep` or `nosemgrep: id, id` suppresses nothing.
@@ -71,12 +72,20 @@ def find_semgrep() -> str:
     search_path = os.pathsep.join(entry for entry in entries if os.path.isabs(entry))
     semgrep = shutil.which("semgrep", path=search_path)
     if not semgrep or not os.path.isabs(semgrep):
-        raise ScanError(f"semgrep not found on PATH; install it with `uv tool install semgrep=={SEMGREP_VERSION}`")
+        raise ScanError("semgrep not found on PATH; install it with `uv tool install semgrep`")
     return semgrep
 
 
 def semgrep_version(semgrep: str) -> str:
     return _run([semgrep, "--version", "--disable-version-check"]).strip()
+
+
+def semgrep_supported(version: str) -> bool:
+    try:
+        installed = tuple(int(part) for part in version.strip().split("."))
+    except ValueError:
+        return False
+    return installed[0] == _SEMGREP_FLOOR[0] and installed >= _SEMGREP_FLOOR
 
 
 def scan(target: Path) -> ScanResult:

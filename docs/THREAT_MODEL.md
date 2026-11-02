@@ -44,4 +44,4 @@ it, and produces findings that gate CI or feed a review.
 | False negative reported | Fixture first, fix the rule, patch release, advisory if a claimed pattern was missed |
 | Compromised dependency | Dependabot or Grype flags it; pin out or accept per CVE in `.grype.yaml` with a reason; patch release |
 | Compromised release | Consumers verify `gh attestation verify`; mark the GitHub release as pre-release, publish a fixed version, advisory |
-| Semgrep behaviour changes | The CLI warns on a version mismatch; rules are tested only against the pinned version |
+| Semgrep behaviour changes | The CLI warns below the tested floor or on a new major; CI tests the pinned version and, without blocking, the latest release |
