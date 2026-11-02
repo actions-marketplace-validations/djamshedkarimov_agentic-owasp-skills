@@ -20,7 +20,7 @@ before it ships. This project fills that gap at the author's PR, not the user's 
 
 | Skill | Source guidance | Maps to | Version |
 |---|---|---|---|
-| [`mcp-security`](skills/mcp-security/) | OWASP MCP Security Cheat Sheet | MCP Top 10 (2025), Agentic Top 10 (2026) | 0.1.2 |
+| [`mcp-security`](skills/mcp-security/) | OWASP MCP Security Cheat Sheet | MCP Top 10 (2025), Agentic Top 10 (2026) | 0.1.3 |
 
 See the [MCP crosswalk](skills/mcp-security/crosswalk.md) for which controls are checked
 automatically and which require review.
@@ -29,7 +29,7 @@ In Claude Code, install the plugin, then run `/agentic-owasp:mcp-security` from 
 directory or ask Claude to review your MCP server:
 
 ```sh
-claude plugin install agentic-owasp --marketplace 'djamshedkarimov/agentic-owasp-skills#v0.1.2'
+claude plugin install agentic-owasp --marketplace 'djamshedkarimov/agentic-owasp-skills#v0.1.3'
 ```
 
 The install pins the marketplace to a release tag, so it never updates on its own. To upgrade,
@@ -44,7 +44,7 @@ Without plugins, copy the skill directory into `~/.claude/skills/` (or a project
 `.claude/skills/`):
 
 ```sh
-git clone --branch v0.1.2 https://github.com/djamshedkarimov/agentic-owasp-skills
+git clone --branch v0.1.3 https://github.com/djamshedkarimov/agentic-owasp-skills
 cp -r agentic-owasp-skills/skills/mcp-security ~/.claude/skills/
 ```
 
@@ -66,7 +66,7 @@ dependency because Semgrep pins an `mcp` version that conflicts with the servers
 
 ```sh
 uv tool install semgrep
-uvx --from git+https://github.com/djamshedkarimov/agentic-owasp-skills@v0.1.2 agentic-owasp scan path/to/server
+uvx --from git+https://github.com/djamshedkarimov/agentic-owasp-skills@v0.1.3 agentic-owasp scan path/to/server
 ```
 
 | Option | Values | Default |
@@ -82,7 +82,7 @@ Exit codes: `0` no findings at or above `--fail-on`, `1` findings, `2` scan erro
 The image bundles the CLI and the tested Semgrep version. Mount the server source at `/src`:
 
 ```sh
-docker run --rm -v "$PWD:/src:ro" ghcr.io/djamshedkarimov/agentic-owasp-skills:0.1.2 scan .
+docker run --rm -v "$PWD:/src:ro" ghcr.io/djamshedkarimov/agentic-owasp-skills:0.1.3 scan .
 ```
 
 Release images are published for `vX.Y.Z` tags with build provenance, verifiable with
@@ -99,7 +99,7 @@ steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     with:
       persist-credentials: false
-  - uses: djamshedkarimov/agentic-owasp-skills@<commit-sha> # v0.1.2
+  - uses: djamshedkarimov/agentic-owasp-skills@<commit-sha> # v0.1.3
     with:
       path: src
 ```
