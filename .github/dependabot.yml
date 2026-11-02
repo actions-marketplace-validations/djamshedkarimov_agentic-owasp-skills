@@ -41,13 +41,3 @@ updates:
       interval: weekly
     cooldown:
       default-days: 14
-
-  - package-ecosystem: pip
-    directory: /docker
-    schedule:
-      interval: weekly
-    cooldown:
-      default-days: 14
-    groups:
-      docker-python:
-        patterns: ["*"]
