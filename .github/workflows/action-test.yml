@@ -14,8 +14,11 @@ concurrency:
 
 jobs:
   findings:
-    name: Fails on the vulnerable examples
-    runs-on: ubuntu-latest
+    name: Fails on the vulnerable examples (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -35,8 +38,11 @@ jobs:
           jq -e '[.runs[0].results[] | select(.ruleId == "mcp-http-no-auth")] | length > 0' "$SARIF"
 
   clean:
-    name: Passes a safe server
-    runs-on: ubuntu-latest
+    name: Passes a safe server (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
