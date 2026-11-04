@@ -11,7 +11,7 @@ make check     # ruff, tsc, Semgrep rule tests, pytest
 
 | Rule | Detail |
 |---|---|
-| Branch from `main`, one concern per PR | `main` only moves by PR, after the required checks pass |
+| Branch from `main`, one concern per PR | `main` only moves by PR, after the required checks pass and one approval. Same-repo PRs by the owner or Dependabot are approved by a workflow; anything else gets a human review |
 | `make check` passes before you push | CI runs the same, plus CodeQL, zizmor, TruffleHog, dependency review, and a Grype image scan |
 | Behaviour changes ship with tests | CLI and Action changes get a pytest case; rule changes get fixtures (below) |
 | Leave versions alone | Releases are separate PRs; see Versioning in the README |
