@@ -1,0 +1,39 @@
+name: Auto approve
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  approve:
+    name: Approve a same-repo PR by the owner or Dependabot
+    # The actor check keeps a push by anyone but the PR's author out of the auto lane.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository
+      && !github.event.pull_request.draft
+      && github.actor == github.event.pull_request.user.login
+      && (github.event.pull_request.user.login == github.repository_owner
+          || github.event.pull_request.user.login == 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      checks: read # watch the required checks
+      pull-requests: write # submit the approving review
+      statuses: read # commit statuses can be required checks too
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      PR: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Wait for the required checks
+        run: gh pr checks "$PR" --repo "$REPO" --required --watch --fail-fast
+      - name: Approve
+        run: |
+          gh pr review "$PR" --repo "$REPO" --approve --body \
+            "Auto-approved: same-repo pull request by the repository owner or Dependabot, all required checks green."
