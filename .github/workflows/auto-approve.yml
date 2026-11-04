@@ -13,10 +13,11 @@ concurrency:
 jobs:
   approve:
     name: Approve a same-repo PR by the owner or Dependabot
-    # Fork PRs only get a read-only token; the gate makes the boundary explicit.
+    # The actor check keeps a push by anyone but the PR's author out of the auto lane.
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository
       && !github.event.pull_request.draft
+      && github.actor == github.event.pull_request.user.login
       && (github.event.pull_request.user.login == github.repository_owner
           || github.event.pull_request.user.login == 'dependabot[bot]')
     runs-on: ubuntu-latest
