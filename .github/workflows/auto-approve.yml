@@ -21,14 +21,19 @@ jobs:
       && (github.event.pull_request.user.login == github.repository_owner
           || github.event.pull_request.user.login == 'dependabot[bot]')
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
+      checks: read # watch the required checks
       pull-requests: write # submit the approving review
+      statuses: read # commit statuses can be required checks too
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      PR: ${{ github.event.pull_request.number }}
     steps:
+      - name: Wait for the required checks
+        run: gh pr checks "$PR" --repo "$REPO" --required --watch --fail-fast
       - name: Approve
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
         run: |
           gh pr review "$PR" --repo "$REPO" --approve --body \
-            "Auto-approved: same-repo pull request by the repository owner or Dependabot. The required checks still gate the merge."
+            "Auto-approved: same-repo pull request by the repository owner or Dependabot, all required checks green."
