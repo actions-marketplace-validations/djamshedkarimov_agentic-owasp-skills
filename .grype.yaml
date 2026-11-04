@@ -1,0 +1,7 @@
+ignore:
+  - vulnerability: CVE-2026-119586
+    package:
+      name: sqlite-libs
+      type: apk
+      version: 3.54.1-r0
+    reason: Flaw is in the sqlite3 shell's .recover output; the image ships libsqlite3 only, never the shell.
