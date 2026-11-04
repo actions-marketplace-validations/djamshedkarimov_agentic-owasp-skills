@@ -150,6 +150,8 @@ make install   # uv env, pinned Semgrep, TypeScript example deps
 make check     # ruff, tsc, pytest
 ```
 
+[CONTRIBUTING.md](CONTRIBUTING.md) covers the PR and rule conventions.
+
 ## Security
 
 Report vulnerabilities as described in [SECURITY.md](SECURITY.md). Every PR runs CodeQL,
