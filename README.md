@@ -134,9 +134,9 @@ The [threat model](docs/THREAT_MODEL.md) has the full picture.
 
 ## Versioning
 
-The repo (CLI, Action, rules) follows SemVer via `vX.Y.Z` tags, with a moving `v1` tag for the
-Action. Each skill also declares its own version in its `SKILL.md`. Rule changes that can
-introduce new findings are a minor bump; removing or renaming a rule ID is a major bump.
+The repo (CLI, Action, rules) follows SemVer via `vX.Y.Z` tags. Each skill also declares its own
+version in its `SKILL.md`. Rule changes that can introduce new findings are a minor bump; removing
+or renaming a rule ID is a major bump.
 
 A release is cut when rules, the CLI, or a skill change, or when the image's Grype gate fails.
 Semgrep and base-image bumps arrive as Dependabot PRs and need no release: the CLI accepts any
