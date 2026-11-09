@@ -119,6 +119,7 @@ function buildServer(): McpServer {
     "sync_account",
     {
       description: "Sync an account with the upstream service.",
+      // ok: mcp-unconstrained-id-param
       inputSchema: z.object({ accountId: z.uuid() }).strict(),
     },
     async ({ accountId }) => {

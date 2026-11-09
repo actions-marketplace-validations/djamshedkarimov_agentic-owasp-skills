@@ -67,3 +67,63 @@ async function notATool(): Promise<string> {
   // ok: mcp-raw-html-return
   return response.text();
 }
+
+server.registerTool(
+  "get_issue",
+  // ruleid: mcp-unconstrained-id-param
+  { description: "Get an issue.", inputSchema: { issue_id: z.string().describe("The issue id") } },
+  async ({ issue_id }) => result(issue_id),
+);
+
+// ruleid: mcp-unconstrained-id-param
+server.tool("get_group", "Get a group.", { groupId: z.string().optional() }, async ({ groupId }) => result(groupId ?? ""));
+
+server.registerTool(
+  "get_issues",
+  // ruleid: mcp-unconstrained-id-param
+  { description: "Get issues.", inputSchema: { issue_ids: z.array(z.string()) } },
+  async ({ issue_ids }) => result(issue_ids.join(",")),
+);
+
+server.registerTool(
+  "get_repo",
+  // ruleid: mcp-unconstrained-id-param
+  { description: "Get a repository.", inputSchema: z.object({ repo_id: z.string() }).strict() },
+  async ({ repo_id }) => result(repo_id),
+);
+
+server.registerTool(
+  "ignore_issue",
+  // ok: mcp-unconstrained-id-param
+  { description: "Ignore an issue.", inputSchema: { issue_id: z.string().regex(/^\d+$/).describe("Digits only") } },
+  async ({ issue_id }) => result(issue_id),
+);
+
+server.registerTool(
+  "get_account",
+  // ok: mcp-unconstrained-id-param
+  { description: "Get an account.", inputSchema: { accountId: z.uuid() } },
+  async ({ accountId }) => result(accountId),
+);
+
+server.registerTool(
+  "get_project",
+  // ok: mcp-unconstrained-id-param
+  { description: "Get a project.", inputSchema: { project_id: z.number().int(), name: z.string() } },
+  async ({ project_id }) => result(String(project_id)),
+);
+
+server.registerTool(
+  "find_issue",
+  {
+    description: "Find an issue.",
+    // ok: mcp-unconstrained-id-param
+    inputSchema: { query: z.string().max(200) },
+    // ok: mcp-unconstrained-id-param
+    outputSchema: { id: z.string() },
+  },
+  async ({ query }) => ({ ...result(query), structuredContent: { id: query } }),
+);
+
+// ok: mcp-unconstrained-id-param
+const filters = { issue_id: z.string() };

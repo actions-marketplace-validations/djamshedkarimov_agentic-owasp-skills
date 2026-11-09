@@ -19,8 +19,9 @@ Pass when every credential's scope can be justified by a specific tool.
 
 ## 2. Tool description & schema integrity
 
-Level: Static. Rule: `mcp-tool-description-injection`.
+Level: Static. Rules: `mcp-tool-description-injection`, `mcp-unconstrained-id-param`.
 
+- [ ] Triage every finding from these rules.
 - [ ] Every tool's input schema rejects unknown fields (`additionalProperties: false`, or a strict Zod/Pydantic model).
 - [ ] String parameters are bounded with `enum`, `pattern`, or `maxLength` where the domain allows.
 - [ ] Tool names and descriptions are static, describe only what the tool does, and contain no instructions to the model.

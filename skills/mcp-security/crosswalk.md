@@ -21,7 +21,7 @@ and states how this project verifies it.
 | # | Cheat sheet control | MCP Top 10 | Agentic Top 10 | Level | What is checked | Rules |
 |---|---|---|---|---|---|---|
 | 1 | Principle of least privilege | MCP01, MCP02 | ASI03 | Partial | Wildcard or write-level OAuth scopes; one credential reused across upstream clients; long-lived PATs loaded from env | — |
-| 2 | Tool description & schema integrity | MCP03 | ASI01, ASI02 | Static | `inputSchema` without `additionalProperties: false`; unconstrained string params (no `pattern`/`enum`/`maxLength`); instruction-like text in tool descriptions | `mcp-tool-description-injection` |
+| 2 | Tool description & schema integrity | MCP03 | ASI01, ASI02 | Static | `inputSchema` without `additionalProperties: false`; unconstrained string params (no `pattern`/`enum`/`maxLength`); instruction-like text in tool descriptions | `mcp-tool-description-injection`, `mcp-unconstrained-id-param` |
 | 3 | Sandbox and isolate servers | MCP05 | ASI05 | Manual | Container/seccomp profile, filesystem and network scope | — |
 | 4 | Human-in-the-loop for sensitive actions | — | ASI02, ASI09 | Manual | Destructive tools marked and gated; approvals bound to exact arguments | — |
 | 5 | Input and output validation | MCP05, MCP06 | ASI02, ASI05 | Static | Tool args reaching shell exec, `eval`, SQL string building, filesystem paths, or outbound URLs without validation | `mcp-shell-injection`, `mcp-code-eval`, `mcp-sql-injection`, `mcp-path-traversal`, `mcp-ssrf` |
