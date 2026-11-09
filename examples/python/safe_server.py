@@ -9,13 +9,14 @@ import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 import jwt
 from mcp.server.auth.provider import AccessToken
 from mcp.server.auth.settings import AuthSettings
 from mcp.server.mcpserver import MCPServer
 from mcp.server.transport_security import TransportSecuritySettings
+from pydantic import Field
 
 WORKSPACE = Path("/srv/workspace").resolve()
 ISSUER_URL = os.environ["MCP_ISSUER_URL"]
@@ -124,7 +125,10 @@ def fetch_page(url: str) -> str:
 
 
 @mcp.tool()
-def sync_account(account_id: str) -> str:
+def sync_account(
+    # ok: mcp-unconstrained-id-param
+    account_id: Annotated[str, Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")],
+) -> str:
     """Sync an account with the upstream service."""
     # ok: mcp-secret-in-log
     logger.info("syncing account %s", account_id)

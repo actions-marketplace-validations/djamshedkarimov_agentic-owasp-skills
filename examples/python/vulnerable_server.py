@@ -54,7 +54,10 @@ def fetch_page(url: str) -> str:
 
 
 @mcp.tool()
-def sync_account(account_id: str) -> str:
+def sync_account(
+    # ruleid: mcp-unconstrained-id-param
+    account_id: str,
+) -> str:
     """Sync an account with the upstream service."""
     # ruleid: mcp-secret-in-log
     logger.info("syncing %s with token %s", account_id, UPSTREAM_API_TOKEN)

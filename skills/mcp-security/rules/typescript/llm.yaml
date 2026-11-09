@@ -73,3 +73,40 @@ rules:
                   - pattern: ($ARGS) => $RESULT
                   - pattern-not: ($ARGS) => {...}
           - focus-metavariable: $RESULT
+
+  - id: mcp-unconstrained-id-param
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: >-
+      Identifier parameter accepts any string. The model controls this value, and identifiers are
+      usually interpolated into a URL path or a lookup key, so `../` or an id of another kind can
+      redirect the request. Constrain the schema with `.regex()`, `.uuid()`, or `.max()`.
+    metadata:
+      cheat-sheet-control: 2
+      owasp-mcp: [MCP03]
+      owasp-agentic: [ASI02]
+      cwe: ["CWE-20"]
+      confidence: MEDIUM
+      references: *references
+    patterns:
+      - pattern-either:
+          - pattern-inside: |
+              $SERVER.registerTool($NAME, {..., inputSchema: $INPUT, ...}, ...)
+          - pattern-inside: |
+              $SERVER.tool($NAME, ..., $INPUT, $HANDLER)
+      - pattern-not-inside: |
+          { ..., outputSchema: { ..., $PARAM: $SCHEMA, ... }, ... }
+      - pattern-not-inside: |
+          { ..., outputSchema: $Z.object({ ..., $PARAM: $SCHEMA, ... }), ... }
+      - pattern: |
+          { ..., $PARAM: $SCHEMA, ... }
+      - focus-metavariable: $SCHEMA
+      - metavariable-regex:
+          metavariable: $PARAM
+          regex: (?i)^(id|\w+_ids?|\w+Ids?)$
+      - metavariable-pattern:
+          metavariable: $SCHEMA
+          pattern: z.string()
+      - metavariable-regex:
+          metavariable: $SCHEMA
+          regex: (?s)^(?!.*\.(regex|uuid|guid|cuid|cuid2|ulid|nanoid|ksuid|xid|max|length|email|url|ip|datetime|date|refine|superRefine|pipe)\().*

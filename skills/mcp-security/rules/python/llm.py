@@ -1,11 +1,13 @@
 import json
 import urllib.request
+from typing import Annotated, Optional
 
 import html2text
 import httpx
 import requests
 from bs4 import BeautifulSoup
 from mcp.server.mcpserver import MCPServer
+from pydantic import Field, StringConstraints
 
 mcp = MCPServer("fixture")
 
@@ -100,3 +102,76 @@ def fetch_status() -> int:
 def fetch_api() -> dict:
     # ok: mcp-raw-html-return
     return httpx.get("https://api.example.com/v1").json()
+
+
+@mcp.tool()
+def get_issue(
+    # ruleid: mcp-unconstrained-id-param
+    issue_id: str,
+) -> str:
+    return issue_id
+
+
+@mcp.tool
+async def get_group(
+    # ruleid: mcp-unconstrained-id-param
+    group_id: str | None = None,
+) -> str:
+    return group_id or ""
+
+
+@mcp.tool()
+def get_issues(
+    # ruleid: mcp-unconstrained-id-param
+    issue_ids: list[str],
+) -> str:
+    return ",".join(issue_ids)
+
+
+@mcp.tool()
+def get_user(
+    # ruleid: mcp-unconstrained-id-param
+    user_id: Annotated[str, Field(description="The user id, a pattern like usr-1")],
+) -> str:
+    return user_id
+
+
+@mcp.tool()
+def get_team(
+    # ruleid: mcp-unconstrained-id-param
+    team_id: Optional[str] = None,  # noqa: UP045 - the rule must see the typing form too
+) -> str:
+    return team_id or ""
+
+
+@mcp.tool()
+def ignore_issue(
+    # ok: mcp-unconstrained-id-param
+    issue_id: Annotated[str, Field(pattern=r"^\d+$")],
+) -> str:
+    return issue_id
+
+
+@mcp.tool()
+def get_repo(
+    # ok: mcp-unconstrained-id-param
+    repo_id: Annotated[str, StringConstraints(pattern=r"^[\w-]{1,64}$")],
+) -> str:
+    return repo_id
+
+
+@mcp.tool()
+def get_project(
+    # ok: mcp-unconstrained-id-param
+    project_id: int,
+    # ok: mcp-unconstrained-id-param
+    name: str,
+) -> str:
+    return f"{project_id} {name}"
+
+
+def not_a_tool_either(
+    # ok: mcp-unconstrained-id-param
+    issue_id: str,
+) -> str:
+    return issue_id
