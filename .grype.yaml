@@ -5,3 +5,9 @@ ignore:
       type: apk
       version: 3.54.1-r0
     reason: Flaw is in the sqlite3 shell's .recover output; the image ships libsqlite3 only, never the shell.
+  - vulnerability: CVE-2026-84243
+    package:
+      name: glibc-2.44
+      type: apk
+    fix-state: unknown
+    reason: gettext loads a message catalog from a path taken from LANGUAGE, and only the operator who runs the container sets its environment. Wolfi has no advisory or fixed build yet; this rule stops applying once Grype reports a fix.
