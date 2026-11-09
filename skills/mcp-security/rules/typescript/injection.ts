@@ -188,3 +188,84 @@ server.registerTool("ssrf_inline_guard", { inputSchema: { url: z.string() } }, a
   const response = await fetch(url);
   return result(await response.text());
 });
+
+class UpstreamClient {
+  constructor(private readonly baseUrl: string) {}
+
+  request(method: string, path: string): Promise<Response> {
+    // ok: mcp-url-path-injection
+    return fetch(`${this.baseUrl}${path}`, { method });
+  }
+
+  ignoreIssue(issueId: string): Promise<Response> {
+    // ruleid: mcp-url-path-injection
+    return this.request("PUT", `/issues/${issueId}/ignore`);
+  }
+
+  getIssue(issueId: string, query: string): Promise<Response> {
+    // ruleid: mcp-url-path-injection
+    return this.request("GET", `/issues/${issueId}${query ? `?${query}` : ""}`);
+  }
+
+  deleteNote(groupId: string, noteId: string): Promise<Response> {
+    // ruleid: mcp-url-path-injection
+    return this.request("DELETE", `/issues/groups/${encodeURIComponent(groupId)}/notes/${noteId}`);
+  }
+
+  ignoreIssueEncoded(issueId: string): Promise<Response> {
+    // ok: mcp-url-path-injection
+    return this.request("PUT", `/issues/${encodeURIComponent(issueId)}/ignore`);
+  }
+
+  getIssueNumeric(issueId: string): Promise<Response> {
+    // ok: mcp-url-path-injection
+    return this.request("GET", `/issues/${Number(issueId)}`);
+  }
+
+  countIssues(query: string): Promise<Response> {
+    // ok: mcp-url-path-injection
+    return this.request("GET", `/issues/counts${query ? `?${query}` : ""}`);
+  }
+
+  listIssues(): Promise<Response> {
+    // ok: mcp-url-path-injection
+    return fetch(`${this.baseUrl}/issues`);
+  }
+
+  getIssueAbsolute(issueId: string): Promise<Response> {
+    // ruleid: mcp-url-path-injection
+    return fetch(`https://api.example.com/v1/issues/${issueId}`);
+  }
+
+  getIssuePrefixed(issueId: string): Promise<Response> {
+    // ruleid: mcp-url-path-injection
+    return fetch(`${this.baseUrl}/issues/${issueId}`);
+  }
+
+  getIssueParsed(issueId: string): Promise<Response> {
+    // ruleid: mcp-url-path-injection
+    return fetch(new URL(`/issues/${issueId}`, this.baseUrl));
+  }
+
+  getIssueAxios(issueId: string): Promise<unknown> {
+    // ruleid: mcp-url-path-injection
+    return axios.get(`/issues/${issueId}`);
+  }
+
+  getStatus(host: string): Promise<Response> {
+    // ok: mcp-url-path-injection
+    return fetch(`http://${host}/status`);
+  }
+
+  getIssueOnHost(host: string, issueId: string): Promise<Response> {
+    // ruleid: mcp-url-path-injection
+    return fetch(`https://${host}/issues/${issueId}`);
+  }
+}
+
+const issueCache = new Map<string, string>();
+
+function cachedIssue(issueId: string): string | undefined {
+  // ok: mcp-url-path-injection
+  return issueCache.get(`/issues/${issueId}`);
+}

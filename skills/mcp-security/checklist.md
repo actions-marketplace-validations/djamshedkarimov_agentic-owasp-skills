@@ -54,11 +54,12 @@ Pass when no tool can cause irreversible harm from a single model call without a
 
 ## 5. Input and output validation
 
-Level: Static. Rules: `mcp-shell-injection`, `mcp-code-eval`, `mcp-sql-injection`, `mcp-path-traversal`, `mcp-ssrf`.
+Level: Static. Rules: `mcp-shell-injection`, `mcp-code-eval`, `mcp-sql-injection`, `mcp-path-traversal`, `mcp-ssrf`, `mcp-url-path-injection`.
 
 - [ ] Triage every finding from these rules.
 - [ ] Check sinks the rules don't model: template engines, deserializers (`pickle`, `yaml.load`), ORM raw queries, `child_process` wrappers.
 - [ ] Follow tool arguments into helper functions and other files; the rules only track taint within one function.
+- [ ] For `mcp-url-path-injection` findings, confirm the interpolated value can come from a tool argument; the rule does not track taint.
 - [ ] Filesystem tools resolve paths and confirm they stay under an allowed root after resolution.
 - [ ] Outbound URL tools allowlist hosts and block private and link-local ranges, including after redirects.
 
