@@ -222,3 +222,43 @@ rules:
               metavariable: $METHOD
               regex: ^(get|post|put|patch|delete|head|request|stream|open)$
           - focus-metavariable: $URL
+
+  - id: mcp-url-path-injection
+    languages: [python]
+    severity: WARNING
+    message: >-
+      Value is interpolated into a URL path without `urllib.parse.quote`. A model-controlled value
+      containing `/`, `..`, `?`, or `#` redirects the request to another endpoint on the upstream
+      host. Wrap each path segment in `urllib.parse.quote(value, safe="")` and validate it against a
+      strict pattern.
+    metadata:
+      cheat-sheet-control: 5
+      owasp-mcp: [MCP05]
+      owasp-agentic: [ASI02]
+      cwe: ["CWE-116"]
+      confidence: MEDIUM
+      references: *references
+    patterns:
+      - pattern-either:
+          - patterns:
+              - pattern: $FUNC(..., $URL, ...)
+              - metavariable-regex:
+                  metavariable: $FUNC
+                  regex: (?i)^_*(fetch\w*|request\w*|urlopen)$
+          - patterns:
+              - pattern: $OBJ.$FUNC(..., $URL, ...)
+              - metavariable-regex:
+                  metavariable: $FUNC
+                  regex: (?i)^_*(fetch\w*|request\w*|urlopen)$
+          - patterns:
+              - pattern: $OBJ.$FUNC($URL, ...)
+              - metavariable-regex:
+                  metavariable: $FUNC
+                  regex: ^(get|post|put|patch|delete|head|stream)$
+              - metavariable-regex:
+                  metavariable: $OBJ
+                  regex: (?i)^(self|requests|httpx|aiohttp|[\w.]*(client|api|http|session|request|transport)[\w.]*)$
+      - focus-metavariable: $URL
+      - metavariable-regex:
+          metavariable: $URL
+          regex: ^(?:[fF][rR]?|[rR][fF])["'](/|https?://|\{[^}]*\}(?=/))[^?]*/\{(?!((urllib\.parse\.)?quote(_plus)?|int)\()

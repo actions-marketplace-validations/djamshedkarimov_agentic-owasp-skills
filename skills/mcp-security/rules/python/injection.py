@@ -200,3 +200,74 @@ async def call_tool(name: str, arguments: dict) -> list[types.TextContent]:
         return [types.TextContent(type="text", text=output)]
     # ruleid: mcp-path-traversal
     return [types.TextContent(type="text", text=(ROOT / arguments["name"]).read_text())]
+
+
+class UpstreamClient:
+    def __init__(self, base_url: str) -> None:
+        self.base_url = base_url
+
+    def request(self, method: str, path: str) -> requests.Response:
+        # ok: mcp-url-path-injection
+        return requests.request(method, f"{self.base_url}{path}", timeout=5)
+
+    def ignore_issue(self, issue_id: str) -> requests.Response:
+        # ruleid: mcp-url-path-injection
+        return self.request("PUT", f"/issues/{issue_id}/ignore")
+
+    def get_issue(self, issue_id: str, query: str) -> requests.Response:
+        # ruleid: mcp-url-path-injection
+        return self.request("GET", f"/issues/{issue_id}?{query}")
+
+    def delete_note(self, group_id: str, note_id: str) -> requests.Response:
+        # ruleid: mcp-url-path-injection
+        return self.request("DELETE", f"/issues/groups/{urllib.parse.quote(group_id, safe='')}/notes/{note_id}")
+
+    def ignore_issue_quoted(self, issue_id: str) -> requests.Response:
+        # ok: mcp-url-path-injection
+        return self.request("PUT", f"/issues/{urllib.parse.quote(issue_id, safe='')}/ignore")
+
+    def get_issue_numeric(self, issue_id: str) -> requests.Response:
+        # ok: mcp-url-path-injection
+        return self.request("GET", f"/issues/{int(issue_id)}")
+
+    def count_issues(self, query: str) -> requests.Response:
+        # ok: mcp-url-path-injection
+        return self.request("GET", f"/issues/counts?{query}")
+
+    def list_issues(self) -> requests.Response:
+        # ok: mcp-url-path-injection
+        return requests.get(f"{self.base_url}/issues", timeout=5)
+
+    def get_issue_absolute(self, issue_id: str) -> requests.Response:
+        # ruleid: mcp-url-path-injection
+        return requests.get(f"https://api.example.com/v1/issues/{issue_id}", timeout=5)
+
+    def get_issue_prefixed(self, issue_id: str) -> bytes:
+        # ruleid: mcp-url-path-injection
+        return urllib.request.urlopen(f"{self.base_url}/issues/{issue_id}").read()
+
+    def get_issue_request(self, issue_id: str) -> urllib.request.Request:
+        # ruleid: mcp-url-path-injection
+        return urllib.request.Request(f"{self.base_url}/issues/{issue_id}", method="GET")
+
+    async def get_issue_async(self, issue_id: str) -> str:
+        async with httpx.AsyncClient(base_url=self.base_url) as client:
+            # ruleid: mcp-url-path-injection
+            response = await client.get(f"/issues/{issue_id}/notes")
+        return response.text
+
+    def get_status(self, host: str) -> requests.Response:
+        # ok: mcp-url-path-injection
+        return requests.get(f"http://{host}/status", timeout=5)
+
+    def get_issue_on_host(self, host: str, issue_id: str) -> requests.Response:
+        # ruleid: mcp-url-path-injection
+        return requests.get(f"https://{host}/issues/{issue_id}", timeout=5)
+
+
+ISSUE_CACHE: dict[str, str] = {}
+
+
+def cached_issue(issue_id: str) -> str | None:
+    # ok: mcp-url-path-injection
+    return ISSUE_CACHE.get(f"/issues/{issue_id}")

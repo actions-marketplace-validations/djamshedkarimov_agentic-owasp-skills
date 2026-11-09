@@ -226,3 +226,43 @@ rules:
               if (<... $ALLOWED.includes(new URL($URL).hostname) ...>) { ... throw $ERROR; }
               ...
           - focus-metavariable: $URL
+
+  - id: mcp-url-path-injection
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: >-
+      Value is interpolated into a URL path without `encodeURIComponent`. A model-controlled value
+      containing `/`, `..`, `?`, or `#` redirects the request to another endpoint on the upstream
+      host. Wrap each path segment in `encodeURIComponent()` and validate it against a strict pattern.
+    metadata:
+      cheat-sheet-control: 5
+      owasp-mcp: [MCP05]
+      owasp-agentic: [ASI02]
+      cwe: ["CWE-116"]
+      confidence: MEDIUM
+      references: *references
+    patterns:
+      - pattern-either:
+          - pattern: new URL($URL, ...)
+          - patterns:
+              - pattern: $FUNC(..., $URL, ...)
+              - metavariable-regex:
+                  metavariable: $FUNC
+                  regex: (?i)^_*(fetch\w*|request\w*|got|axios|ky)$
+          - patterns:
+              - pattern: $OBJ.$FUNC(..., $URL, ...)
+              - metavariable-regex:
+                  metavariable: $FUNC
+                  regex: (?i)^_*(fetch\w*|request\w*)$
+          - patterns:
+              - pattern: $OBJ.$FUNC($URL, ...)
+              - metavariable-regex:
+                  metavariable: $FUNC
+                  regex: ^(get|post|put|patch|delete|del|head)$
+              - metavariable-regex:
+                  metavariable: $OBJ
+                  regex: (?i)^(this|axios|got|ky|https?|superagent|[\w.]*(client|api|http|session|request|fetcher|transport)[\w.]*)$
+      - focus-metavariable: $URL
+      - metavariable-regex:
+          metavariable: $URL
+          regex: ^`(/|https?://|\$\{[^}]*\}(?=/))[^`?]*/\$\{(?!(encodeURIComponent|Number|parseInt)\()

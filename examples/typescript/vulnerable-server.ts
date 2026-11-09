@@ -13,6 +13,9 @@ import { textResult } from "./text-result.js";
 const WORKSPACE = "/srv/workspace";
 // ruleid: mcp-hardcoded-secret
 const UPSTREAM_API_TOKEN = "not-a-real-token-for-fixture";
+const upstream = {
+  request: (method: string, path: string) => fetch(`https://api.example.com/v1${path}`, { method }),
+};
 
 function buildServer(): McpServer {
   const server = new McpServer({ name: "vulnerable-example", version: "0.0.0" });
@@ -67,6 +70,8 @@ function buildServer(): McpServer {
     async ({ accountId }) => {
       // ruleid: mcp-secret-in-log
       console.info(`syncing ${accountId} with token ${UPSTREAM_API_TOKEN}`);
+      // ruleid: mcp-url-path-injection
+      await upstream.request("POST", `/accounts/${accountId}/sync`);
       return textResult("synced");
     },
   );

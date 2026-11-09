@@ -15,6 +15,16 @@ logger = logging.getLogger(__name__)
 mcp = MCPServer("vulnerable-example")
 
 
+class UpstreamClient:
+    def request(self, method: str, path: str) -> bytes:
+        req = urllib.request.Request(f"https://api.example.com/v1{path}", method=method)
+        with urllib.request.urlopen(req, timeout=10) as response:
+            return response.read()
+
+
+upstream = UpstreamClient()
+
+
 @mcp.tool()
 def run_diagnostic(target: str) -> str:
     """Ping a host to check connectivity."""
@@ -61,6 +71,8 @@ def sync_account(
     """Sync an account with the upstream service."""
     # ruleid: mcp-secret-in-log
     logger.info("syncing %s with token %s", account_id, UPSTREAM_API_TOKEN)
+    # ruleid: mcp-url-path-injection
+    upstream.request("POST", f"/accounts/{account_id}/sync")
     return "synced"
 
 

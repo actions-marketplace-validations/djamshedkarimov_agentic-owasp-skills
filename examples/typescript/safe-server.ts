@@ -18,6 +18,9 @@ import { textResult } from "./text-result.js";
 
 const WORKSPACE = resolve("/srv/workspace");
 const FETCH_ALLOWED_HOSTS = new Set(["docs.python.org", "developer.mozilla.org"]);
+const upstream = {
+  request: (method: string, path: string) => fetch(`https://api.example.com/v1${path}`, { method }),
+};
 const OPERATORS = {
   "+": (a: number, b: number) => a + b,
   "-": (a: number, b: number) => a - b,
@@ -125,6 +128,8 @@ function buildServer(): McpServer {
     async ({ accountId }) => {
       // ok: mcp-secret-in-log
       console.info(`syncing ${accountId}`);
+      // ok: mcp-url-path-injection
+      await upstream.request("POST", `/accounts/${encodeURIComponent(accountId)}/sync`);
       return textResult("synced");
     },
   );

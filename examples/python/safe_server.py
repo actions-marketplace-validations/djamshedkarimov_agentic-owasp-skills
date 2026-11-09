@@ -76,6 +76,16 @@ mcp = MCPServer(
 )
 
 
+class UpstreamClient:
+    def request(self, method: str, path: str) -> bytes:
+        req = urllib.request.Request(f"https://api.example.com/v1{path}", method=method)
+        with urllib.request.urlopen(req, timeout=10) as response:
+            return response.read()
+
+
+upstream = UpstreamClient()
+
+
 @mcp.tool()
 def run_diagnostic(target: str) -> str:
     """Ping a host to check connectivity."""
@@ -132,6 +142,8 @@ def sync_account(
     """Sync an account with the upstream service."""
     # ok: mcp-secret-in-log
     logger.info("syncing account %s", account_id)
+    # ok: mcp-url-path-injection
+    upstream.request("POST", f"/accounts/{urllib.parse.quote(account_id, safe='')}/sync")
     return "synced"
 
 
