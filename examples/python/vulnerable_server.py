@@ -64,6 +64,7 @@ def fetch_page(url: str) -> str:
 
 
 @mcp.tool()
+# ruleid: mcp-write-tool-no-annotations
 def sync_account(
     # ruleid: mcp-unconstrained-id-param
     account_id: str,

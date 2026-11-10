@@ -94,8 +94,12 @@ server.registerTool(
 
 server.registerTool(
   "ignore_issue",
-  // ok: mcp-unconstrained-id-param
-  { description: "Ignore an issue.", inputSchema: { issue_id: z.string().regex(/^\d+$/).describe("Digits only") } },
+  {
+    description: "Ignore an issue.",
+    // ok: mcp-unconstrained-id-param
+    inputSchema: { issue_id: z.string().regex(/^\d+$/).describe("Digits only") },
+    annotations: { destructiveHint: false, idempotentHint: true },
+  },
   async ({ issue_id }) => result(issue_id),
 );
 
@@ -127,3 +131,38 @@ server.registerTool(
 
 // ok: mcp-unconstrained-id-param
 const filters = { issue_id: z.string() };
+
+server.registerTool(
+  // ruleid: mcp-write-tool-no-annotations
+  "delete_note",
+  { description: "Delete a note.", inputSchema: { note: z.string() } },
+  async ({ note }) => result(note),
+);
+
+server.registerTool(
+  // ok: mcp-write-tool-no-annotations
+  "delete_account",
+  { description: "Delete an account.", annotations: { destructiveHint: true, idempotentHint: true } },
+  async () => result("deleted"),
+);
+
+// ruleid: mcp-write-tool-no-annotations
+server.tool("aikido_snooze_issue", "Snooze an issue.", { issue: z.string() }, async ({ issue }) => result(issue));
+
+// ok: mcp-write-tool-no-annotations
+server.tool("aikido_unsnooze_issue", "Unsnooze an issue.", { issue: z.string() }, { destructiveHint: false, idempotentHint: true }, async ({ issue }) => result(issue));
+
+// ok: mcp-write-tool-no-annotations
+server.tool("aikido_get_issue_details_bulk", "Get several issues.", { issues: z.array(z.string()) }, async () => result(""));
+
+// ok: mcp-write-tool-no-annotations
+server.registerTool("list_notes", { description: "List notes." }, async () => result(""));
+
+// ruleid: mcp-write-tool-no-annotations
+server.registerTool("sendEmail", { description: "Send an email." }, async () => result("sent"));
+
+// ok: mcp-write-tool-no-annotations
+server.registerTool("settings", { description: "Show settings." }, async () => result(""));
+
+// ruleid: mcp-write-tool-no-annotations
+server.tool("publish", async () => result("published"));

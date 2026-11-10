@@ -43,8 +43,9 @@ N/A only if the repo ships no deployment artifacts; then say so in the report.
 
 ## 4. Human-in-the-loop for sensitive actions
 
-Level: Manual.
+Level: Partial. Rules: `mcp-write-tool-no-annotations`.
 
+- [ ] Triage every finding from this rule; it keys on the tool name, so also check write tools it cannot name.
 - [ ] Destructive or irreversible tools (delete, send, pay, deploy, write) are identified.
 - [ ] Those tools carry annotations such as `destructiveHint: true` / `readOnlyHint: false`, or require explicit confirmation (elicitation).
 - [ ] Any confirmation is bound to the exact arguments that will execute, not a summary the model wrote.

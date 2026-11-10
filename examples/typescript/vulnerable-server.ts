@@ -64,6 +64,7 @@ function buildServer(): McpServer {
   );
 
   server.registerTool(
+    // ruleid: mcp-write-tool-no-annotations
     "sync_account",
     // ruleid: mcp-unconstrained-id-param
     { description: "Sync an account with the upstream service.", inputSchema: { accountId: z.string() } },

@@ -119,11 +119,13 @@ function buildServer(): McpServer {
   );
 
   server.registerTool(
+    // ok: mcp-write-tool-no-annotations
     "sync_account",
     {
       description: "Sync an account with the upstream service.",
       // ok: mcp-unconstrained-id-param
       inputSchema: z.object({ accountId: z.uuid() }).strict(),
+      annotations: { destructiveHint: false, idempotentHint: true },
     },
     async ({ accountId }) => {
       // ok: mcp-secret-in-log
