@@ -2,7 +2,7 @@
   "name": "agentic-owasp",
   "displayName": "Agentic OWASP",
   "icon": "./assets/icon.png",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Review MCP servers against the OWASP MCP Security Cheat Sheet: a Semgrep scan plus a checklist for the controls static analysis cannot cover",
   "author": {
     "name": "Djamshed Karimov",
