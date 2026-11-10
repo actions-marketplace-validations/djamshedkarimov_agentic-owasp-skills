@@ -16,6 +16,7 @@ from mcp.server.auth.provider import AccessToken
 from mcp.server.auth.settings import AuthSettings
 from mcp.server.mcpserver import MCPServer
 from mcp.server.transport_security import TransportSecuritySettings
+from mcp.types import ToolAnnotations
 from pydantic import Field
 
 WORKSPACE = Path("/srv/workspace").resolve()
@@ -134,7 +135,8 @@ def fetch_page(url: str) -> str:
     return "\n".join(extractor.chunks)
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(destructiveHint=False, idempotentHint=True))
+# ok: mcp-write-tool-no-annotations
 def sync_account(
     # ok: mcp-unconstrained-id-param
     account_id: Annotated[str, Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")],

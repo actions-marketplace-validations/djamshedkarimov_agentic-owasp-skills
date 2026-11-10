@@ -7,6 +7,7 @@ import httpx
 import requests
 from bs4 import BeautifulSoup
 from mcp.server.mcpserver import MCPServer
+from mcp.types import ToolAnnotations
 from pydantic import Field, StringConstraints
 
 mcp = MCPServer("fixture")
@@ -144,7 +145,7 @@ def get_team(
     return team_id or ""
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(destructiveHint=False, idempotentHint=True))
 def ignore_issue(
     # ok: mcp-unconstrained-id-param
     issue_id: Annotated[str, Field(pattern=r"^\d+$")],
@@ -175,3 +176,45 @@ def not_a_tool_either(
     issue_id: str,
 ) -> str:
     return issue_id
+
+
+@mcp.tool()
+# ruleid: mcp-write-tool-no-annotations
+def delete_note(note: str) -> str:
+    return note
+
+
+@mcp.tool(annotations=ToolAnnotations(destructiveHint=True, idempotentHint=True))
+# ok: mcp-write-tool-no-annotations
+def delete_account(account: str) -> str:
+    return account
+
+
+@mcp.tool
+# ruleid: mcp-write-tool-no-annotations
+async def snooze_issue(issue: str) -> str:
+    return issue
+
+
+# ruleid: mcp-write-tool-no-annotations
+@mcp.tool(name="unsnooze_issue")
+def plain_name(issue: str) -> str:
+    return issue
+
+
+@mcp.tool(name="list_issues")
+# ok: mcp-write-tool-no-annotations
+def delete_nothing() -> str:
+    return ""
+
+
+@mcp.tool()
+# ok: mcp-write-tool-no-annotations
+def get_issue_details_bulk(issues: list[str]) -> str:
+    return ""
+
+
+@mcp.tool()
+# ok: mcp-write-tool-no-annotations
+def settings() -> str:
+    return ""

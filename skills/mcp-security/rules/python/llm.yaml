@@ -124,3 +124,46 @@ rules:
       - metavariable-regex:
           metavariable: $TYPE
           regex: (?s)^(str|str\s*\|\s*None|Optional\[str\]|list\[str\]|Annotated\[\s*str\s*,(?!.*((pattern|max_length)\s*=|StringConstraints\()).*)$
+
+  - id: mcp-write-tool-no-annotations
+    languages: [python]
+    severity: WARNING
+    message: >-
+      Tool name suggests a write or destructive action, but the tool carries no annotations. Clients
+      use `destructiveHint`, `readOnlyHint`, and `idempotentHint` to decide whether to ask the user
+      before a call, so an unannotated write runs on a single model call. Add
+      `annotations=ToolAnnotations(...)` that match what the tool does.
+    metadata:
+      cheat-sheet-control: 4
+      owasp-mcp: [MCP03]
+      owasp-agentic: [ASI02, ASI09]
+      cwe: ["CWE-451"]
+      confidence: MEDIUM
+      references: *references
+    patterns:
+      - pattern-either:
+          - patterns:
+              - pattern-either:
+                  - pattern: |
+                      @$SERVER.tool(...)
+                      def $NAME(...): ...
+                  - pattern: |
+                      @$SERVER.tool
+                      def $NAME(...): ...
+              - pattern-not: |
+                  @$SERVER.tool(..., annotations=$A, ...)
+                  def $NAME(...): ...
+              - pattern-not: |
+                  @$SERVER.tool(..., name=$N, ...)
+                  def $NAME(...): ...
+          - patterns:
+              - pattern: |
+                  @$SERVER.tool(..., name="$NAME", ...)
+                  def $F(...): ...
+              - pattern-not: |
+                  @$SERVER.tool(..., annotations=$A, ...)
+                  def $F(...): ...
+      - focus-metavariable: $NAME
+      - metavariable-regex:
+          metavariable: $NAME
+          regex: ^(\w+_)?(add|adjust|approve|apply|archive|assign|cancel|clear|close|create|delete|deploy|destroy|disable|drop|edit|enable|execute|ignore|insert|link|merge|modify|move|mute|pay|post|publish|purge|put|reject|remove|rename|reopen|reset|resolve|restore|review|revoke|send|set|snooze|solve|submit|sync|transfer|trigger|unignore|unlink|unsnooze|update|upload|write)(_\w+|[A-Z]\w*)?$
