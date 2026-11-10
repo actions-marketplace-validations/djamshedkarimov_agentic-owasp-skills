@@ -124,7 +124,8 @@ covers the rest.
 | Not detected | Why |
 |---|---|
 | Tool handlers outside the known idioms: `@server.tool`, `@server.call_tool()`, `registerTool`/`tool` with an inline handler, `setRequestHandler(CallToolRequestSchema, …)`. A handler passed by name is not followed | Sources are matched by idiom |
-| A tool argument that reaches a sink through a helper function | Taint is tracked within one function |
+| Whether a tool argument reaches a helper function's sink. `mcp-url-path-injection` flags an unencoded URL path inside the helper, but not which tool, if any, feeds it | Taint is tracked within one function |
+| A write tool or an id parameter whose name breaks convention, such as `handle_ticket` or `ref` | `mcp-write-tool-no-annotations` and `mcp-unconstrained-id-param` match names, not behaviour |
 | A no-op function whose name looks like a validator, such as `validate_path` | Sanitizers are matched by name |
 | Files under `test/`, `tests/`, `.claude/`, paths listed in `.gitignore` or `.semgrepignore`, files over 1 MB, files Semgrep cannot parse | Semgrep defaults; parse failures are reported as warnings |
 
