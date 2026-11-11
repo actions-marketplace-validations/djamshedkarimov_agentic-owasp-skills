@@ -1,6 +1,6 @@
 # Threat model
 
-What this project protects, who can attack it, and what we do about it. Dated 2026-11-02, for 0.1.3.
+What this project protects, who can attack it, and what we do about it. Dated 2026-11-10, for 0.2.0.
 
 ## What it is
 
@@ -35,7 +35,7 @@ it, and produces findings that gate CI or feed a review.
 | 6 | Tampered dependencies or build | Hash-locked requirements, SHA-pinned actions, zizmor, dependency review, Grype gate, build provenance attestation, weekly Scorecard | The scanned image and the pushed image are separate builds from the same cache |
 | 7 | Tampered repository | `main` accepts only pull requests, no force-push or deletion; CodeQL and secret scanning with push protection | Single maintainer; required status checks and tag protection are repository settings, not code |
 | 8 | Bad release ships | SemVer; consumers pin the Action by commit SHA and the image by version or digest; patch release plus advisory | Registry tags cannot be withdrawn, only superseded |
-| 9 | Consumer misreads results | Default gate fails on 10 of 12 rules; parse errors and empty scans are warnings in the CLI and annotations in the Action | A warning is easy to ignore |
+| 9 | Consumer misreads results | Default gate fails on 9 of 15 rules; parse errors and empty scans are warnings in the CLI and annotations in the Action | A warning is easy to ignore |
 
 ## If it goes wrong
 

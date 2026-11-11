@@ -20,7 +20,7 @@ before it ships. This project fills that gap at the author's PR, not the user's 
 
 | Skill | Source guidance | Maps to | Version |
 |---|---|---|---|
-| [`mcp-security`](skills/mcp-security/) | OWASP MCP Security Cheat Sheet | MCP Top 10 (2025), Agentic Top 10 (2026) | 0.1.3 |
+| [`mcp-security`](skills/mcp-security/) | OWASP MCP Security Cheat Sheet | MCP Top 10 (2025), Agentic Top 10 (2026) | 0.2.0 |
 
 See the [MCP crosswalk](skills/mcp-security/crosswalk.md) for which controls are checked
 automatically and which require review.
@@ -29,7 +29,7 @@ In Claude Code, install the plugin, then run `/agentic-owasp:mcp-security` from 
 directory or ask Claude to review your MCP server:
 
 ```sh
-claude plugin install agentic-owasp --marketplace 'djamshedkarimov/agentic-owasp-skills#v0.1.3'
+claude plugin install agentic-owasp --marketplace 'djamshedkarimov/agentic-owasp-skills#v0.2.0'
 ```
 
 The install pins the marketplace to a release tag, so it never updates on its own. To upgrade,
@@ -44,7 +44,7 @@ Without plugins, copy the skill directory into `~/.claude/skills/` (or a project
 `.claude/skills/`):
 
 ```sh
-git clone --branch v0.1.3 https://github.com/djamshedkarimov/agentic-owasp-skills
+git clone --branch v0.2.0 https://github.com/djamshedkarimov/agentic-owasp-skills
 cp -r agentic-owasp-skills/skills/mcp-security ~/.claude/skills/
 ```
 
@@ -66,7 +66,7 @@ dependency because Semgrep pins an `mcp` version that conflicts with the servers
 
 ```sh
 uv tool install semgrep
-uvx --from git+https://github.com/djamshedkarimov/agentic-owasp-skills@v0.1.3 agentic-owasp scan path/to/server
+uvx --from git+https://github.com/djamshedkarimov/agentic-owasp-skills@v0.2.0 agentic-owasp scan path/to/server
 ```
 
 | Option | Values | Default |
@@ -82,7 +82,7 @@ Exit codes: `0` no findings at or above `--fail-on`, `1` findings, `2` scan erro
 The image bundles the CLI and the tested Semgrep version. Mount the server source at `/src`:
 
 ```sh
-docker run --rm -v "$PWD:/src:ro" ghcr.io/djamshedkarimov/agentic-owasp-skills:0.1.3 scan .
+docker run --rm -v "$PWD:/src:ro" ghcr.io/djamshedkarimov/agentic-owasp-skills:0.2.0 scan .
 ```
 
 Release images are published for `vX.Y.Z` tags with build provenance, verifiable with
@@ -99,7 +99,7 @@ steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     with:
       persist-credentials: false
-  - uses: djamshedkarimov/agentic-owasp-skills@<commit-sha> # v0.1.3
+  - uses: djamshedkarimov/agentic-owasp-skills@<commit-sha> # v0.2.0
     with:
       path: src
 ```
@@ -124,7 +124,8 @@ covers the rest.
 | Not detected | Why |
 |---|---|
 | Tool handlers outside the known idioms: `@server.tool`, `@server.call_tool()`, `registerTool`/`tool` with an inline handler, `setRequestHandler(CallToolRequestSchema, …)`. A handler passed by name is not followed | Sources are matched by idiom |
-| A tool argument that reaches a sink through a helper function | Taint is tracked within one function |
+| Whether a tool argument reaches a helper function's sink. `mcp-url-path-injection` flags an unencoded URL path inside the helper, but not which tool, if any, feeds it | Taint is tracked within one function |
+| A write tool or an id parameter whose name breaks convention, such as `handle_ticket` or `ref` | `mcp-write-tool-no-annotations` and `mcp-unconstrained-id-param` match names, not behaviour |
 | A no-op function whose name looks like a validator, such as `validate_path` | Sanitizers are matched by name |
 | Files under `test/`, `tests/`, `.claude/`, paths listed in `.gitignore` or `.semgrepignore`, files over 1 MB, files Semgrep cannot parse | Semgrep defaults; parse failures are reported as warnings |
 
