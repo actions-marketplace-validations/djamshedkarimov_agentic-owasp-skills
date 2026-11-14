@@ -7,6 +7,20 @@ make install   # uv env, pinned Semgrep, TypeScript example deps
 make check     # ruff, tsc, Semgrep rule tests, pytest
 ```
 
+The scanner's security overrides are in `docker/security-overrides.in`. Semgrep
+currently declares older MCP and OpenTelemetry versions; these overrides select
+patched releases while keeping the OpenTelemetry packages in sync. `make install`
+applies the same overrides to the local scanner. After changing them, run
+`make relock` to regenerate the complete hashed dependency list for Python 3.14,
+then run `make check` and the Action and Docker CI checks to verify compatibility.
+
+The Action and image install that complete list with `--no-deps` so pip does not
+reapply Semgrep's vulnerable dependency pins. Hash verification and wheel-only
+installation remain enabled. Remove the overrides when Semgrep's requirements
+accept the patched versions. The Docker build also refreshes the pinned base's
+packages and requires updated glibc and Python builds; vulnerability scanning
+continues to gate the resulting image.
+
 ## Pull requests
 
 | Rule | Detail |

@@ -2,13 +2,13 @@ SEMGREP_VERSION := $(shell sed -n 's/^semgrep==//p' docker/requirements.in)
 SEMGREP ?= semgrep==$(SEMGREP_VERSION)
 TS_EXAMPLES := examples/typescript
 RULES := skills/mcp-security/rules
-COMPILE := uv pip compile --universal --python-version 3.13 --generate-hashes --exclude-newer $(shell date -u +%Y-%m-%d)
+COMPILE := uv pip compile --universal --python-version 3.14 --generate-hashes --exclude-newer $(shell date -u +%Y-%m-%d)
 
 .PHONY: install lint format test check relock
 
 install:
 	uv sync --locked
-	uv tool install --force $(SEMGREP)
+	uv tool install --force --overrides docker/security-overrides.in $(SEMGREP)
 	semgrep --version
 	npm ci --prefix $(TS_EXAMPLES)
 
@@ -28,5 +28,5 @@ test:
 check: lint test
 
 relock:
-	$(COMPILE) docker/requirements.in -o docker/requirements.txt
+	$(COMPILE) --override docker/security-overrides.in docker/requirements.in -o docker/requirements.txt
 	$(COMPILE) docker/build-requirements.in -o docker/build-requirements.txt

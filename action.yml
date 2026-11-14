@@ -15,6 +15,9 @@ inputs:
   upload-sarif:
     description: Upload the SARIF report to GitHub code scanning (needs security-events write).
     default: "true"
+  strict:
+    description: Fail with exit 2 if no files were scanned or Semgrep reported errors.
+    default: "true"
 
 outputs:
   sarif:
@@ -27,7 +30,7 @@ runs:
     - id: python
       uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
       with:
-        python-version: "3.13"
+        python-version: "3.14"
         update-environment: false
     - name: Install scanner
       shell: bash
@@ -37,7 +40,7 @@ runs:
       run: |
         venv="$RUNNER_TEMP/agentic-owasp"
         "$PYTHON" -m venv "$venv"
-        "$venv/bin/pip" install --quiet --require-hashes --only-binary :all: \
+        "$venv/bin/pip" install --quiet --require-hashes --only-binary :all: --no-deps \
           -r "$GITHUB_ACTION_PATH/docker/requirements.txt" -r "$GITHUB_ACTION_PATH/docker/build-requirements.txt"
         "$venv/bin/pip" install --quiet --no-deps --no-build-isolation "$GITHUB_ACTION_PATH"
     - id: scan
@@ -46,12 +49,20 @@ runs:
       env:
         TARGET: ${{ inputs.path }}
         FAIL_ON: ${{ inputs.fail-on }}
+        STRICT: ${{ inputs.strict }}
       run: |
-        sarif="$RUNNER_TEMP/agentic-owasp.sarif"
+        report_dir=$(mktemp -d "$RUNNER_TEMP/agentic-owasp-report.XXXXXX")
+        sarif="$report_dir/scan.sarif"
         export PATH="$RUNNER_TEMP/agentic-owasp/bin:$PATH"
         status=0
-        agentic-owasp scan "$TARGET" --format sarif --output "$sarif" --fail-on "$FAIL_ON" || status=$?
-        test "$status" -ne 2 || exit 2
+        scan_args=()
+        case "$STRICT" in
+          true) scan_args+=(--strict) ;;
+          false) ;;
+          *) echo 'strict must be true or false' >&2; exit 2 ;;
+        esac
+        agentic-owasp scan "$TARGET" --format sarif --output "$sarif" --fail-on "$FAIL_ON" "${scan_args[@]}" || status=$?
+        test -f "$sarif" || exit 2
         echo "sarif=$sarif" >> "$GITHUB_OUTPUT"
         echo "status=$status" >> "$GITHUB_OUTPUT"
     - name: Annotate findings
