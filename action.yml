@@ -30,7 +30,7 @@ runs:
     - id: python
       uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
       with:
-        python-version: "3.13"
+        python-version: "3.14"
         update-environment: false
     - name: Install scanner
       shell: bash
@@ -40,7 +40,7 @@ runs:
       run: |
         venv="$RUNNER_TEMP/agentic-owasp"
         "$PYTHON" -m venv "$venv"
-        "$venv/bin/pip" install --quiet --require-hashes --only-binary :all: \
+        "$venv/bin/pip" install --quiet --require-hashes --only-binary :all: --no-deps \
           -r "$GITHUB_ACTION_PATH/docker/requirements.txt" -r "$GITHUB_ACTION_PATH/docker/build-requirements.txt"
         "$venv/bin/pip" install --quiet --no-deps --no-build-isolation "$GITHUB_ACTION_PATH"
     - id: scan
