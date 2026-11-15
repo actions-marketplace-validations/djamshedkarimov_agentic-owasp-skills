@@ -1,15 +1,17 @@
-FROM cgr.dev/chainguard/wolfi-base@sha256:24f549a7fcace88e69b9557941168c74645688ecc4acf7fb6d734a6b74e9019d AS python
-RUN apk add --no-cache python-3.13
+FROM cgr.dev/chainguard/wolfi-base@sha256:1f6b749929164c3d9e7cad0289254f39b2ba51e1dddaeb0fa57532ea03f2db31 AS python
+# Refresh packages inherited from the pinned base, including the glibc fixes.
+RUN apk upgrade --no-cache \
+    && apk add --no-cache 'glibc-2.44>=2.44-r19' 'python-3.14>=3.14.10_git20261111-r0'
 
 FROM python AS builder
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1
 WORKDIR /build
 COPY docker/*.txt docker/
-RUN python3.13 -m venv /opt/build \
+RUN python3.14 -m venv /opt/build \
     && /opt/build/bin/pip install --require-hashes --only-binary :all: -r docker/build-requirements.txt \
-    && python3.13 -m venv /opt/venv \
-    && /opt/venv/bin/pip install --require-hashes --only-binary :all: -r docker/requirements.txt
+    && python3.14 -m venv /opt/venv \
+    && /opt/venv/bin/pip install --require-hashes --only-binary :all: --no-deps -r docker/requirements.txt
 COPY pyproject.toml hatch_build.py README.md LICENSE ./
 COPY src src
 COPY skills skills
