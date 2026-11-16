@@ -68,3 +68,10 @@ At inspected base `3bcf9fa`, `assets/icon.png` is a real 512×512 PNG and the pl
 the older missing-icon observation does not describe this base. Package/reference checks and host
 installation still require verification for the new workflow. Leave existing scanner behavior and
 release versions unchanged.
+
+## Portable preparation export
+
+Use the repository [bundle guide](https://github.com/djamshedkarimov/agentic-owasp-skills/blob/main/docs/manual-review/bundle-guide.md)
+for a fixed-inventory export and standalone integrity/reference checks. The exported five-document
+kit needs no checkout dependencies. This is preparation packaging, not a host plugin installation
+or target assessment; the intake and milestone prerequisites above still apply.
