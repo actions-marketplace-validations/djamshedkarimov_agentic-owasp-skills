@@ -1,56 +1,48 @@
-# OWASP skills and tools roadmap
+# AI Security Skills Suite roadmap
 
-The free MCP source-review skill is the foundation. Keep its existing code and review materials
-Apache-2.0 and useful on their own. Future commercial products should earn their price through
-maintained execution, integrations, evidence management, or support. Do not repackage unchanged
-public instructions as an exclusive security product or imply OWASP certification.
+Our direction is a suite of OWASP-aligned security skills for AI applications, agents, MCP
+integrations, and the systems running them. Assessments will connect security requirements to
+source and runtime evidence, actionable remediation, and repeatable verification.
 
-## Coverage families
+## Available today
 
-Keep mappings versioned and separate. The current skill uses the MCP Security Cheat Sheet, MCP
-Top 10 (2025), and Agentic Top 10 (2026). Web and API coverage are distinct future tracks, not
-synonyms for MCP coverage. Exact controls should be checked against the source before each release.
+The MCP source-review skill combines a manual checklist with deterministic source scanning.
+The CLI, Docker image, and GitHub Action support local reviews and CI checks. See the
+[README](../README.md) for supported stacks and current limitations.
 
-| Track | Primary guidance | Product boundary |
-|---|---|---|
-| MCP | https://owasp.org/www-project-mcp-top-10/ | Server source, credentials, tool schemas and transports |
-| Agentic | https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/ | Tool authority, identity boundaries, untrusted context and execution |
-| Web | https://owasp.org/Top10/2025/ | Application source and architecture; separate framework adapters |
-| API | https://owasp.org/API-Security/editions/2023/en/0x11-t10/ | Object/function authorization, resource limits and API inventory |
+## Next
 
-These are links to source guidance, not copied OWASP text. Mappings are project judgments.
+- Establish shared control mappings and assessment reports across skills.
+- Add AI application threat modeling and reviews of input, output, and data-access boundaries.
+- Extend agent reviews to tool permissions, delegation, approvals, and execution limits,
+  including agents that do not use MCP.
 
-## Proposed sequence
+## Planned coverage
 
-| Stage | Deliverable | Buyer value | Release evidence required |
-|---|---|---|---|
-| Free foundation | MCP review skill, report-health checker, crosswalk, setup, worked report | Useful local review with honest coverage limits | Static/unit checks, scanner fixture tests, report-health failure cases |
-| First paid candidate | MCP authorization review skill plus a local evidence collector | Maps caller/tenant/tool permissions and highlights missing enforcement | Tenant-isolation and confused-deputy fixtures, actual source evidence, no credentials collected |
-| Second paid candidate | Agentic tool-boundary review and regression runner | Checks exact-argument approvals, tool permissions, and untrusted context boundaries | Approved local test harness, repeatable scenarios, expected evidence and failure outcomes |
-| Maintained tool candidate | CI evidence and baseline service | Tracks coverage gaps, accepted findings, changes and retests across repositories | Reproducible reports, documented retention/access, integration tests and operational support |
-| Later tracks | Dedicated web or API skills | Framework-specific remediation and authorization evidence | Separate OWASP version mappings and independent benchmark repositories |
+| Area | Focus |
+|---|---|
+| AI applications | Prompt injection, output handling, sensitive data exposure, resource limits |
+| RAG and memory | Retrieval permissions, tenant isolation, ingestion integrity, memory lifecycle |
+| Agents | Tool authority, identity propagation, delegation, approvals, action boundaries |
+| MCP integrations | Server/client boundaries, schemas, credentials, transports, tool interactions |
+| AI systems | Deployment configuration, service identities, secrets, isolation, monitoring |
+| Model supply chains | Provenance, artifact integrity, dependencies, loading and release changes |
+| Release reviews | Consolidated evidence, unresolved risks, change tracking, regression checks |
 
-Do not implement a hosted service, process private repositories, or add recurring charges as part
-of this roadmap. Define those products with actual users before building the service.
+## OWASP alignment
 
-## Common output contract
+Planned verification will draw on
+[OWASP AISVS](https://owasp.github.io/www-project-artificial-intelligence-security-verification-standard-aisvs-docs/)
+and [ASVS](https://asvs.owasp.org/), with separate mappings to applicable LLM, agentic, MCP,
+and API security guidance. Reports will identify the guidance versions and assessed scope.
+OWASP alignment does not imply certification or endorsement.
 
-Each finding should carry the target revision, source evidence, control/mapping version,
-severity rationale, confidence, remediation and retest instructions. Keep automated scan health,
-confirmed failures and missing manual evidence separate. Unknown is not Pass; a suppressed finding
-is not automatically dismissed. Do not reduce partially reviewed controls to a coverage percentage.
+## Delivery approach
 
-## Validation before a paid release
+Release capabilities progressively with documented support, worked examples, and validation.
+Keep missing evidence and unsupported checks visible, and distinguish source review from
+runtime verification. Future items are exploratory; scope and ordering may change as we learn
+from users. No release dates are committed.
 
-1. Demonstrate reliable installation in a clean supported environment and at least one full report.
-2. Run positive and negative fixtures plus independent real repositories with permission to review.
-3. Publish benchmark revisions, expected findings, false positives/negatives and unscannable scope;
-   distinguish author-written fixtures from independent evaluation.
-4. Forward-test the agent workflow for missing evidence, unavailable tooling, hostile instructions,
-   helper-function flows and no-op validators. Retain actual reports instead of claiming a score
-   from instruction wording alone.
-5. Validate the buyer's saved work/time with prospective users, then test a price. A subscription
-   needs continuing maintained value and a defined update/support promise.
-
-No paid launch, price, release date or sales forecast is committed here. The current Agensi listing
-stays free; paid publishing additionally requires connected payouts.
+Suggest a use case or request coverage through the repository's
+[issue tracker](https://github.com/djamshedkarimov/agentic-owasp-skills/issues).

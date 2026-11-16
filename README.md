@@ -147,14 +147,15 @@ Findings silenced with a `nosemgrep` comment are still listed, marked `suppresse
 the gate. A scan that reaches no files warns and reports `in 0 files` rather than passing quietly.
 The [threat model](docs/THREAT_MODEL.md) has the full picture.
 
-## Free skill and future tools
+## Review resources and roadmap
 
-The MCP review skill, checklist, scanner, and evidence examples remain free and Apache-2.0.
+The MCP review skill, checklist, scanner, and evidence examples are available under Apache-2.0.
 The [setup guide](skills/mcp-security/setup.md) lists prerequisites; the
 [sample report](skills/mcp-security/sample-report.md) demonstrates Unknown and Not scanned outcomes.
 `safe*` example filenames identify rule-negative fixtures, not production security certification.
-See the [product roadmap](docs/PRODUCT_ROADMAP.md) for proposed maintained integrations and tools.
-Those products are plans, not currently available capabilities.
+See the [AI Security Skills Suite roadmap](docs/PRODUCT_ROADMAP.md) for planned AI application, agent,
+RAG/memory, MCP, deployment, and model supply-chain assessments. These are plans, not currently
+available capabilities.
 
 ## Versioning
 
