@@ -3,3 +3,6 @@ __pycache__/
 .ruff_cache/
 .venv/
 node_modules/
+
+# Local implementation planning
+/docs/ENHANCEMENT_PLAN.md
