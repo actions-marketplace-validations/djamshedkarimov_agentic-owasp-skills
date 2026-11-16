@@ -12,6 +12,8 @@ The CLI, Docker image, and GitHub Action support local reviews and CI checks. Se
 
 ## Next
 
+- Prepare the first non-MCP manual review using the [intake workflow](manual-review/README.md).
+  Target-specific checks and host installation remain pending target and host selection.
 - Establish shared control mappings and assessment reports across skills.
 - Add AI application threat modeling and reviews of input, output, and data-access boundaries.
 - Extend agent reviews to tool permissions, delegation, approvals, and execution limits,
