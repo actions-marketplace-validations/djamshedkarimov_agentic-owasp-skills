@@ -75,3 +75,8 @@ Use the repository [bundle guide](https://github.com/djamshedkarimov/agentic-owa
 for a fixed-inventory export and standalone integrity/reference checks. The exported five-document
 kit needs no checkout dependencies. This is preparation packaging, not a host plugin installation
 or target assessment; the intake and milestone prerequisites above still apply.
+
+An optional [structured completeness guide](https://github.com/djamshedkarimov/agentic-owasp-skills/blob/main/docs/manual-review/status-guide.md)
+describes the separate standard-library intake status utility. It names self-reported missing
+prerequisites; a complete result still requires human evidence resolution and engineer agreement.
+It is not part of the fixed bundle and does not select checks or validate security verdicts.
