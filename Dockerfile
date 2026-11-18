@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/wolfi-base@sha256:2c12da5496e21e99003b3db3b9246f025e53d533c4df334205391260f1e8f85b AS python
+FROM cgr.dev/chainguard/wolfi-base@sha256:7135c6a5e9f29b2542aaefee63d474973312bfdea95555963aef0e648210e4d2 AS python
 # Refresh packages inherited from the pinned base, including the glibc fixes.
 RUN apk upgrade --no-cache \
     && apk add --no-cache 'glibc-2.44>=2.44-r19' 'python-3.14>=3.14.10_git20261111-r0'
